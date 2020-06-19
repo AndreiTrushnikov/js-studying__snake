@@ -11,12 +11,17 @@
         <div class="container">
             <div class="snake-wrap">
                 <div class="snake-header">
-                    <input type="button" class="snake-header__start" value="Start">
+                    <input type="button" class="snake-header__start" value="Start" id="start">
+                    <input type="button" class="snake-header__start" value="Stop" id="stop">
                 </div>
                 <div class="snake-body">
-                    <div class="snake-body__field">
+                    <div class="snake-body__field" id="field">
                         <div id="snake"></div>
                     </div>
+                </div>
+                <div class="snake-info">
+                    <p>Отчёты:</p>
+                    <p id="reports"></p>
                 </div>
             </div>
         </div>
