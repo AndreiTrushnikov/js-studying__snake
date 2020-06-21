@@ -4,15 +4,10 @@ let startX = 0; // относительно родителя (от 0 до 200)
 let startY = 0; // относительно родителя (от 0 до 200)
 // let snakeWidth = 10;
 // let snakeHeight = 10;
-let speed = 250; // Скорость движения в мс
+let speed = 500; // Скорость движения в мс
 let snake = document.querySelector('#tail-0'); // начальный пиксель змейки
 let tailCount = 0; // Количество сегментов хвоста
-let tailObj = {
-    0: {
-        'x': startX,
-        'y': startY
-    }
-};
+let tailObj = {}
 
 /* Кнопки */
 let startBtn = document.querySelector('#start'); // Кнопка старт
@@ -122,8 +117,10 @@ function snakeTailMovement(oldBlock, tailCount) {
             tailObj[`${tailCount}`].x = tailObj[`${temp}`].x;
             tailObj[`${tailCount}`].y = tailObj[`${temp}`].y;
             // createAllCoord(tailCount);
-            tail.style.top = tailObj[`${tailCount}`].x;
-            tail.style.left = tailObj[`${tailCount}`].y;
+            console.log('tailObj[',`${tailCount}`,'].x',  tailObj[`${tailCount}`].x);
+            
+            tail.style.top = tailObj[`${temp}`].y;
+            tail.style.left = tailObj[`${temp}`].x;
             // console.log(`Snake Head X = `,snake.style.left);
             // console.log(`Snake Head Y = `,snake.style.top);
             // console.log(`Tail-${tailCount} X = `,tail.style.left);
@@ -187,12 +184,12 @@ function snakeUpFn() {
     clearInterval(snakeDown);
     clearInterval(snakeLeft);
     clearInterval(snakeRight);
-    setTimeout((() => {
-        let tempTop = snake.style.top;
-        snake.style.top = parseInt(tempTop) - 10 + 'px';
-        tailObj[0].y = snake.style.top;
-        isEaten();
-    }),0);
+    // setTimeout((() => {
+    //     let tempTop = snake.style.top;
+    //     snake.style.top = parseInt(tempTop) - 10 + 'px';
+    //     tailObj[0].y = snake.style.top;
+    //     isEaten();
+    // }),0);
     snakeUp = setInterval(() => {
         let tempTop = snake.style.top;
         snake.style.top = parseInt(tempTop) - 10 + 'px';
@@ -207,12 +204,12 @@ function snakeDownFn() {
     clearInterval(snakeLeft);
     clearInterval(snakeRight);
     clearInterval(snakeUp);
-    setTimeout((() => {
-        let tempTop = snake.style.top;
-        snake.style.top = parseInt(tempTop) + 10 + 'px';
-        tailObj[0].y = snake.style.top;
-        isEaten();
-    }),0);
+    // setTimeout((() => {
+    //     let tempTop = snake.style.top;
+    //     snake.style.top = parseInt(tempTop) + 10 + 'px';
+    //     tailObj[0].y = snake.style.top;
+    //     isEaten();
+    // }),0);
     snakeDown = setInterval(() => {
         let tempTop = snake.style.top;
         snake.style.top = parseInt(tempTop) + 10 + 'px';
@@ -227,12 +224,12 @@ function snakeLeftFn() {
     clearInterval(snakeDown);
     clearInterval(snakeRight);
     clearInterval(snakeUp);
-    setTimeout((() => {
-        let tempLeft = snake.style.left;
-        snake.style.left = parseInt(tempLeft) - 10 + 'px';
-        tailObj[0].x = snake.style.left;
-        isEaten();
-    }),0);
+    // setTimeout((() => {
+    //     let tempLeft = snake.style.left;
+    //     snake.style.left = parseInt(tempLeft) - 10 + 'px';
+    //     tailObj[0].x = snake.style.left;
+    //     isEaten();
+    // }),0);
     snakeLeft = setInterval(() => {
         let tempLeft = snake.style.left;
         snake.style.left = parseInt(tempLeft) - 10 + 'px';
@@ -247,12 +244,12 @@ function snakeRightFn() {
     clearInterval(snakeDown);
     clearInterval(snakeLeft);
     clearInterval(snakeUp);
-    setTimeout((() => {
-        let tempLeft = snake.style.left;
-        snake.style.left = parseInt(tempLeft) + 10 + 'px';
-        tailObj[0].x = snake.style.left;
-        isEaten();
-    }),0);
+    // setTimeout((() => {
+    //     let tempLeft = snake.style.left;
+    //     snake.style.left = parseInt(tempLeft) + 10 + 'px';
+    //     tailObj[0].x = snake.style.left;
+    //     isEaten();
+    // }),0);
     snakeRight = setInterval(() => {
         let tempLeft = snake.style.left;
         snake.style.left = parseInt(tempLeft) + 10 + 'px';
@@ -336,6 +333,12 @@ function stopGame() {
 }
 // Запуск игры
 function startGame(startX,startY,speed) {
+    tailObj = {
+        0: {
+            'x': startX,
+            'y': startY
+        }
+    };
     reports.innerHTML = 'Начало игры!';
     setPosition(startX,startY);
     snakeRightFn(speed);
