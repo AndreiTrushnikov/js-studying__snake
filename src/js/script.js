@@ -6,7 +6,13 @@ let startY = 0; // относительно родителя (от 0 до 200)
 // let snakeHeight = 10;
 let speed = 250; // Скорость движения в мс
 let snake = document.querySelector('#tail-0'); // начальный пиксель змейки
-let tailObj = {};
+let tailCount = 0; // Количество сегментов хвоста
+let tailObj = {
+    0: {
+        'x': startX,
+        'y': startY
+    }
+};
 
 /* Кнопки */
 let startBtn = document.querySelector('#start'); // Кнопка старт
@@ -36,24 +42,24 @@ function snakePartCoordY(tailCount) {
     let snakePart = document.querySelector(`#tail-${tailCount}`); 
     return snakePart.style.top;
 }
-function createAllCoord(tailCount) {
-    if (tailCount == 0) {
-        tailObj[tailCount] = {
-            'x' : snakePartCoordX(tailCount),
-            'y' : snakePartCoordY(tailCount)
-        };       
-    }
-    if (tailCount > 1) {
-        // tailObj[tailCount-1] = {
-        //     'x' : snakePartCoordX(tailCount-1),
-        //     'y' : snakePartCoordY(tailCount-1)
-        // }; 
-        let tailPart = document.querySelector(`#tail-${tailCount}`);
-        tailPart.style.left = snakePartCoordX(tailCount-1);
-        tailPart.style.top = snakePartCoordY(tailCount-1);
-    }
-    return tailObj;
-}
+// function createAllCoord(tailCount) {
+//     if (tailCount == 0) {
+//         tailObj[tailCount] = {
+//             'x' : snakePartCoordX(tailCount),
+//             'y' : snakePartCoordY(tailCount)
+//         };
+//     }
+//     if (tailCount > 1) {
+//         // tailObj[tailCount-1] = {
+//         //     'x' : snakePartCoordX(tailCount-1),
+//         //     'y' : snakePartCoordY(tailCount-1)
+//         // };
+//         let tailPart = document.querySelector(`#tail-${tailCount}`);
+//         tailPart.style.left = snakePartCoordX(tailCount-1);
+//         tailPart.style.top = snakePartCoordY(tailCount-1);
+//     }
+//     return tailObj;
+// }
 /* Генерация нового блока */
 function newRandomBlock(widthOfField, heightOfField) {
     let x, y;
@@ -95,26 +101,29 @@ function newRandomBlock(widthOfField, heightOfField) {
     return [x, y];
 }
 // Перемещения хвоста
-function snakeTailMovement(tailCount) {
+function snakeTailMovement(oldBlock, tailCount) {
     // clearInterval(snakeTailUp);
     // clearInterval(snakeTailDown);
     // clearInterval(snakeTailLeft);
     // clearInterval(snakeTailRight);
 
-    // console.log('.'+tailCount);
-    
     let tail = document.querySelector(`#tail-${tailCount}`);
-    console.log('Tail =',tail);
 
-    // let newX = tailObj[tailCount-1].x;
-    // let newY = tailObj[tailCount-1].y;
+    console.log('Tail =',tail);
+    tailObj[`${tailCount}`] = {};
+    console.log(tailObj);
     
     // snakeTailUpDelay = setTimeout(()=> {
-        
+        let temp = tailCount-1;
         snakeTailUp = setInterval(() => {
-            createAllCoord(tailCount);
-            // tail.style.top = snakePartCoordY(tailCount-1);
-            // tail.style.left = snakePartCoordX(tailCount-1);
+            // console.log(tailCount);
+            // console.log(tailObj[tailCount]);
+            
+            tailObj[`${tailCount}`].x = tailObj[`${temp}`].x;
+            tailObj[`${tailCount}`].y = tailObj[`${temp}`].y;
+            // createAllCoord(tailCount);
+            tail.style.top = tailObj[`${tailCount}`].x;
+            tail.style.left = tailObj[`${tailCount}`].y;
             // console.log(`Snake Head X = `,snake.style.left);
             // console.log(`Snake Head Y = `,snake.style.top);
             // console.log(`Tail-${tailCount} X = `,tail.style.left);
@@ -123,50 +132,47 @@ function snakeTailMovement(tailCount) {
         },speed);
     // },speed);
 }
-
 // Если съел
-let tailCount = 0;
-function wasEaten(direction, oldBlock) {
+function wasEaten(oldBlock) {
     tailCount++;
-    
     oldBlock.classList.remove('food');
     oldBlock.id = `tail-${tailCount}`;
     oldBlock.classList.add('tail--body');
 
-    snakeCoordinates = setInterval(()=>{
-        // debugger
-        tailObj = createAllCoord(tailCount);
-    },speed);
-
-    snakeTailMovement(tailCount);
-
+    // snakeCoordinates = setInterval(()=>{
+    //     // debugger
+    //     tailObj = createAllCoord(tailCount);
+    // },speed);
+    snakeTailMovement(oldBlock, tailCount);
     let newBlock = newRandomBlock(widthOfField, heightOfField);
     return newBlock;
 }
 // проверка попадания snake на food
-function isEaten(currentX, currentY) {
+function isEaten() {
     let food = document.querySelector('.food');
-    if ((food.style.left == currentX) && (food.style.top == currentY)) {
-        wasEaten(direction,food,currentX,currentY);
+    if ((food.style.left == snakePartCoordX(0)) && (food.style.top == snakePartCoordY(0))) {
+        wasEaten(food);
     }
 }
 // проверка на столкновения со стенками поля
 function checkBorders() {
-    // if ((snake.style.top < 0 + 'px') || (snake.style.top == heightOfField + 'px') || (snake.style.left < 0 + 'px') || (snake.style.left == widthOfField + 'px')) {
-    //     reports.innerHTML = 'Ты проиграл!';
-
-    //     stopGame();
-    // }
-    if ( < 0) {
+    if ((snake.style.top < 0 + 'px') || (snake.style.top == heightOfField + 'px') || (snake.style.left < 0 + 'px') || (snake.style.left == widthOfField + 'px')) {
+        reports.innerHTML = 'Ты проиграл!';
+        stopGame();
+    }
+}
+// Если хочется проходить через стены и появляться с другой стороны
+function throughBorders() {
+    if ( parseInt(snake.style.top) < 0) {
         snake.style.top = heightOfField-10+'px'; 
     }
-    if (snake.style.top > heightOfField) {
+    if (parseInt(snake.style.top) > heightOfField) {
         snake.style.top = 0 +'px'; 
     }
-    if (snake.style.left < 0) {
+    if (parseInt(snake.style.left) < 0) {
         snake.style.left = widthOfField-10 + 'px';
     }
-    if (snake.style.left > widthOfField + 'px') {
+    if (parseInt(snake.style.left) > widthOfField) {
         snake.style.left = 0 + 'px';
     }
 }
@@ -184,12 +190,14 @@ function snakeUpFn() {
     setTimeout((() => {
         let tempTop = snake.style.top;
         snake.style.top = parseInt(tempTop) - 10 + 'px';
-        isEaten(snakePartCoordX(0),snakePartCoordY(0));
+        tailObj[0].y = snake.style.top;
+        isEaten();
     }),0);
     snakeUp = setInterval(() => {
         let tempTop = snake.style.top;
         snake.style.top = parseInt(tempTop) - 10 + 'px';
-        isEaten(snakePartCoordX(0),snakePartCoordY(0));
+        tailObj[0].y = snake.style.top;
+        isEaten();
         checkBorders();
     },speed);
 }
@@ -202,12 +210,14 @@ function snakeDownFn() {
     setTimeout((() => {
         let tempTop = snake.style.top;
         snake.style.top = parseInt(tempTop) + 10 + 'px';
-        isEaten(snakePartCoordX(0),snakePartCoordY(0));
+        tailObj[0].y = snake.style.top;
+        isEaten();
     }),0);
     snakeDown = setInterval(() => {
         let tempTop = snake.style.top;
         snake.style.top = parseInt(tempTop) + 10 + 'px';
-        isEaten(snakePartCoordX(0),snakePartCoordY(0));
+        tailObj[0].y = snake.style.top;
+        isEaten();
         checkBorders();
     },speed);
 }
@@ -220,12 +230,14 @@ function snakeLeftFn() {
     setTimeout((() => {
         let tempLeft = snake.style.left;
         snake.style.left = parseInt(tempLeft) - 10 + 'px';
-        isEaten(snakePartCoordX(0),snakePartCoordY(0));
+        tailObj[0].x = snake.style.left;
+        isEaten();
     }),0);
     snakeLeft = setInterval(() => {
         let tempLeft = snake.style.left;
         snake.style.left = parseInt(tempLeft) - 10 + 'px';
-        isEaten(snakePartCoordX(0),snakePartCoordY(0));
+        tailObj[0].x = snake.style.left;
+        isEaten();
         checkBorders();
     },speed);
 }
@@ -238,12 +250,14 @@ function snakeRightFn() {
     setTimeout((() => {
         let tempLeft = snake.style.left;
         snake.style.left = parseInt(tempLeft) + 10 + 'px';
-        isEaten(snakePartCoordX(0),snakePartCoordY(0));
+        tailObj[0].x = snake.style.left;
+        isEaten();
     }),0);
     snakeRight = setInterval(() => {
         let tempLeft = snake.style.left;
         snake.style.left = parseInt(tempLeft) + 10 + 'px';
-        isEaten(snakePartCoordX(0),snakePartCoordY(0));
+        tailObj[0].x = snake.style.left;
+        isEaten();
         checkBorders();
     },speed);
 }
@@ -260,7 +274,7 @@ let arrowPresses = function (e) {
             // if (tail) {
             //     snakeTailUpFn();
             //     // tail.classList.remove('tail');
-            // }            
+            // }
         }
     }
     if (e.keyCode == 40) {
