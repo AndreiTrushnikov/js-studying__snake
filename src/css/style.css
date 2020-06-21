@@ -44,8 +44,8 @@ input[type="button"]:disabled {
 }
 
 .snake-body__field {
-    width: 300px;
-    height: 300px;
+    width: 100px;
+    height: 100px;
     position: relative;
     border: 1px solid #000;
     overflow: hidden;
@@ -59,7 +59,7 @@ input[type="button"]:disabled {
     width: 200px;
 }
 
-#snake {
+#tail-0 {
     position: absolute;
     top: 100px;
     left: 100px;
@@ -77,7 +77,7 @@ input[type="button"]:disabled {
     background-color: rgb(33, 158, 167);
     border-radius: 25%;
 }
-.tail {
+.tail--body {
     position: absolute;
     width: 10px;
     height: 10px;
